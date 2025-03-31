@@ -2,7 +2,10 @@
   "name": "whatsapp-n8n-server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "format": "bunx biome format --write src",
+    "lint": "bunx biome lint --write src",
+    "check": "bunx biome check src"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",
@@ -10,6 +13,7 @@
     "whatsapp-web.js": "^1.27.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^20.11.17",
     "tsx": "^4.7.1"
   }
