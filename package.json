@@ -10,7 +10,8 @@
   "dependencies": {
     "@hono/node-server": "^1.14.0",
     "hono": "^4.7.5",
-    "whatsapp-web.js": "^1.27.0"
+    "whatsapp-web.js": "^1.27.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
