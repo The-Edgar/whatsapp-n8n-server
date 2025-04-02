@@ -4,18 +4,25 @@ import {
   getWhatsAppClient,
   resetWhatsAppClient,
 } from "@/lib/Whatsapp/infrastructure/WhatsappClient";
+import { WhatsappClientIsNotReadyError } from "../../domain/exceptions/WhatsappClientIsNotReadyError";
 
 export class WhatsappService implements WhatsappRepository {
   async sendMessage(message: Message): Promise<void> {
     try {
       const client = await getWhatsAppClient();
 
+      if (!client) {
+        throw new WhatsappClientIsNotReadyError(
+          "Client not ready or disconnected",
+        );
+      }
+
       await client.sendMessage(
         `${message.number.value}@c.us`,
         message.content.value,
       );
     } catch (error) {
-      resetWhatsAppClient();
+      await resetWhatsAppClient();
 
       throw error;
     }
