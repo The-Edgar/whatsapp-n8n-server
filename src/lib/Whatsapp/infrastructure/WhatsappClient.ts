@@ -17,7 +17,16 @@ export const getWhatsAppClient = async (): Promise<
       client = new Client({
         authStrategy: new LocalAuth(),
         puppeteer: {
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-accelerated-2d-canvas",
+            "--no-first-run",
+            "--no-zygote",
+            "--single-process",
+            "--disable-gpu",
+          ],
         },
       });
 
@@ -36,10 +45,33 @@ export const getWhatsAppClient = async (): Promise<
         console.log("Client authenticated!");
       });
 
+      client.on("disconnected", async (reason) => {
+        console.log("Client was disconnected:", reason);
+        isReady = false;
+        initializationPromise = null;
+
+        await getWhatsAppClient();
+      });
+
       client.on("auth_failure", (msg) => {
         console.error("Authentication failure:", msg);
         isReady = false;
         initializationPromise = null;
+      });
+
+      process.on("SIGINT", async () => {
+        console.log("\nSIGINT received. Cleaning up WhatsApp client...");
+
+        try {
+          if (client) {
+            await client.destroy();
+            console.log("WhatsApp client destroyed.");
+          }
+        } catch (err) {
+          console.error("Error destroying WhatsApp client:", err);
+        } finally {
+          process.exit(0);
+        }
       });
 
       client.initialize();
@@ -54,9 +86,17 @@ export const getWhatsAppClient = async (): Promise<
   return client;
 };
 
-export const resetWhatsAppClient = () => {
-  if (client) client.destroy();
+export const resetWhatsAppClient = async () => {
+  try {
+    if (client) await client.destroy();
 
-  isReady = false;
-  initializationPromise = null;
+    isReady = false;
+    initializationPromise = null;
+
+    return await getWhatsAppClient();
+  } catch (error) {
+    console.error("Error resetting WhatsApp client:", error);
+
+    throw error;
+  }
 };
