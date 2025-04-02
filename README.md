@@ -1,4 +1,4 @@
-# WhatsApp N8N Server
+# WhatsApp N8N Server – Automate WhatsApp Messaging via REST API + N8N
 
 A Node.js server that integrates with WhatsApp Web via `whatsapp-web.js`, enabling automated message sending through a REST API. Built with Clean Architecture principles.
 
