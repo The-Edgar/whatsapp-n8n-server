@@ -6,7 +6,6 @@ import * as HttpStatusPhrases from "@/lib/Shared/common/HttpStatusPhrases";
 
 export const authMiddleware: MiddlewareHandler = async (c, next) => {
   const apiKey = c.req.header("x-api-key");
-  console.log(env?.API_KEY);
 
   if (!apiKey || apiKey !== env?.API_KEY) {
     return c.json(
