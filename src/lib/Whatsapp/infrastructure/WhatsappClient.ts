@@ -49,8 +49,6 @@ export const getWhatsAppClient = async (): Promise<
         console.log("Client was disconnected:", reason);
         isReady = false;
         initializationPromise = null;
-
-        await getWhatsAppClient();
       });
 
       client.on("auth_failure", (msg) => {
@@ -59,20 +57,20 @@ export const getWhatsAppClient = async (): Promise<
         initializationPromise = null;
       });
 
-      process.on("SIGINT", async () => {
-        console.log("\nSIGINT received. Cleaning up WhatsApp client...");
+      // process.on("SIGINT", async () => {
+      //   console.log("\nSIGINT received. Cleaning up WhatsApp client...");
 
-        try {
-          if (client) {
-            await client.destroy();
-            console.log("WhatsApp client destroyed.");
-          }
-        } catch (err) {
-          console.error("Error destroying WhatsApp client:", err);
-        } finally {
-          process.exit(0);
-        }
-      });
+      //   try {
+      //     if (client) {
+      //       await client.destroy();
+      //       console.log("WhatsApp client destroyed.");
+      //     }
+      //   } catch (err) {
+      //     console.error("Error destroying WhatsApp client:", err);
+      //   } finally {
+      //     process.exit(0);
+      //   }
+      // });
 
       client.initialize();
     });
@@ -86,17 +84,17 @@ export const getWhatsAppClient = async (): Promise<
   return client;
 };
 
-export const resetWhatsAppClient = async () => {
-  try {
-    if (client) await client.destroy();
+// export const resetWhatsAppClient = async () => {
+//   try {
+//     if (client) await client.destroy();
 
-    isReady = false;
-    initializationPromise = null;
+//     isReady = false;
+//     initializationPromise = null;
 
-    return await getWhatsAppClient();
-  } catch (error) {
-    console.error("Error resetting WhatsApp client:", error);
+//     return await getWhatsAppClient();
+//   } catch (error) {
+//     console.error("Error resetting WhatsApp client:", error);
 
-    throw error;
-  }
-};
+//     throw error;
+//   }
+// };
