@@ -30,3 +30,6 @@ lerna-debug.log*
 # wwebjs
 .wwebjs_auth
 .wwebjs_cache
+
+# dist
+dist/
