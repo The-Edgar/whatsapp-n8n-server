@@ -20,6 +20,7 @@
     "@biomejs/biome": "1.9.4",
     "@types/node": "^20.11.17",
     "@types/qrcode-terminal": "^0.12.2",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.2"
   }
 }
