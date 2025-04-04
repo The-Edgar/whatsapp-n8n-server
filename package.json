@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "build": "tsc",
     "format": "bunx biome format --write src",
     "lint": "bunx biome lint --write src",
     "check": "bunx biome check src"
