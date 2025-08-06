@@ -1,7 +1,7 @@
-import { WhatsappClientIsNotReadyError } from "@/lib/Whatsapp/domain/exceptions/WhatsappClientIsNotReadyError";
 import qrcode from "qrcode-terminal";
 import type { Client as WhatsAppWebClient } from "whatsapp-web.js";
 import pkg from "whatsapp-web.js";
+import { WhatsappClientIsNotReadyError } from "@/lib/Whatsapp/domain/exceptions/WhatsappClientIsNotReadyError";
 
 const { Client, LocalAuth } = pkg;
 

@@ -1,5 +1,5 @@
-import { SendMessageController } from "@/lib/Whatsapp/infrastructure/controllers/SendMessageController";
 import type { Hono } from "hono";
+import { SendMessageController } from "@/lib/Whatsapp/infrastructure/controllers/SendMessageController";
 
 const sendMessage = new SendMessageController();
 

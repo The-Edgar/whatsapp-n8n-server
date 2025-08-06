@@ -1,3 +1,5 @@
+import type { Context, TypedResponse } from "hono";
+import type { StatusCode } from "hono/utils/http-status";
 import * as HttpStatusCodes from "@/lib/Shared/common/HttpStatusCodes";
 import * as HttpStatusPhrases from "@/lib/Shared/common/HttpStatusPhrases";
 import type {
@@ -9,8 +11,6 @@ import { EmptyMessageContentError } from "@/lib/Whatsapp/domain/exceptions/Empty
 import { InvalidMessageDataError } from "@/lib/Whatsapp/domain/exceptions/InvalidMessageDataError";
 import { InvalidPhoneNumberError } from "@/lib/Whatsapp/domain/exceptions/InvalidPhoneNumberError";
 import { RecipientNotFoundError } from "@/lib/Whatsapp/domain/exceptions/RecipientNotFoundError";
-import type { Context, TypedResponse } from "hono";
-import type { StatusCode } from "hono/utils/http-status";
 
 export class SendMessageController implements Controller {
   async run(

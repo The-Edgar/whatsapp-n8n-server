@@ -1,7 +1,7 @@
+import { serve } from "@hono/node-server";
 import { env } from "@/lib/Shared/infrastructure/config/env";
 import { createApp } from "@/lib/Shared/infrastructure/hono/createApp";
 import { registerRoutes } from "@/lib/Shared/infrastructure/routes/registerRoutes";
-import { serve } from "@hono/node-server";
 
 const app = createApp();
 
