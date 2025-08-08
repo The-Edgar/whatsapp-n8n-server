@@ -14,8 +14,8 @@ export class WhatsappService implements WhatsappRepository {
     }
 
     await client.sendMessage(
-      `${message.number.value}@c.us`,
-      message.content.value,
+      `${message.chatId.value}@c.us`,
+      message.message.value,
     );
   }
 }

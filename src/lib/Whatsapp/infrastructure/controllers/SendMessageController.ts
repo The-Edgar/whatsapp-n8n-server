@@ -18,9 +18,9 @@ export class SendMessageController implements Controller {
   ): Promise<Response & TypedResponse<ControllerResponse, StatusCode, "json">> {
     try {
       const services = c.get("services") as ServicesContainer;
-      const { number, content } = await c.req.json();
+      const { chatId, message } = await c.req.json();
 
-      await services.whatsapp.sendMessage.run(number, content);
+      await services.whatsapp.sendMessage.run(chatId, message);
 
       return c.json({ message: HttpStatusPhrases.OK }, HttpStatusCodes.OK);
     } catch (error) {

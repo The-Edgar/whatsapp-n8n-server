@@ -8,7 +8,7 @@ export class MessageContent {
 
   private validateContent(value: string) {
     if (value.length < 3) {
-      throw new Error("Message content must be at least 3 characters long");
+      throw new Error("Message must be at least 3 characters long");
     }
   }
 }
