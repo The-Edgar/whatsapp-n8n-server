@@ -9,7 +9,12 @@ let client: WhatsAppWebClient;
 let isReady = false;
 let initializationPromise: Promise<void> | null = null;
 let currentQrCode: string | null = null;
-let connectionStatus: 'initializing' | 'qr' | 'authenticating' | 'ready' | 'disconnected' = 'disconnected';
+let connectionStatus:
+  | "initializing"
+  | "qr"
+  | "authenticating"
+  | "ready"
+  | "disconnected" = "disconnected";
 
 export const getWhatsAppClient = async (): Promise<
   InstanceType<typeof Client>
@@ -40,7 +45,7 @@ export const getWhatsAppClient = async (): Promise<
         qrcode.generate(qr, { small: true });
 
         currentQrCode = qr;
-        connectionStatus = 'qr';
+        connectionStatus = "qr";
       });
 
       client.on("ready", () => {
@@ -49,26 +54,29 @@ export const getWhatsAppClient = async (): Promise<
         try {
           client.setBackgroundSync(true);
         } catch (syncError) {
-          console.warn('Failed to sync chat history: ', syncError instanceof Error ? syncError.message : String(syncError))
+          console.warn(
+            "Failed to sync chat history: ",
+            syncError instanceof Error ? syncError.message : String(syncError),
+          );
         }
 
         isReady = true;
         currentQrCode = null;
-        connectionStatus = 'ready';
-        
+        connectionStatus = "ready";
+
         resolve();
       });
 
       client.on("authenticated", () => {
         console.log("Client authenticated!");
-        connectionStatus = 'authenticating';
+        connectionStatus = "authenticating";
       });
 
       client.on("disconnected", async (reason) => {
         console.log("Client was disconnected:", reason);
         isReady = false;
         currentQrCode = null;
-        connectionStatus = 'disconnected';
+        connectionStatus = "disconnected";
         initializationPromise = null;
       });
 
@@ -76,7 +84,7 @@ export const getWhatsAppClient = async (): Promise<
         console.error("Authentication failure:", msg);
         isReady = false;
         currentQrCode = null;
-        connectionStatus = 'disconnected'
+        connectionStatus = "disconnected";
         initializationPromise = null;
       });
 
@@ -94,13 +102,12 @@ export const getWhatsAppClient = async (): Promise<
 
 export const getQrCode = (): string | null => {
   return currentQrCode;
-}
+};
 
 export const getConnectionStatus = (): string => {
   return connectionStatus;
-}
+};
 
 export const initializeClient = (): void => {
-  if (!initializeClient) 
-    getWhatsAppClient().catch(console.error)
-}
+  if (!initializationPromise) getWhatsAppClient().catch(console.error);
+};
