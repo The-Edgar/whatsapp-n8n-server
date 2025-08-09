@@ -1,25 +1,22 @@
-import { InvalidMessageDataError } from "@/lib/Whatsapp/domain/exceptions/InvalidMessageDataError";
 import type { ChatId } from "@/lib/Whatsapp/domain/value-objects/ChatId";
 import type { MessageContent } from "@/lib/Whatsapp/domain/value-objects/MessageContent";
+import type { MessageId } from "@/lib/Whatsapp/domain/value-objects/MessageId";
 
-export class Message {
+export class ReplyMessage {
   chatId: ChatId;
+  messageId: MessageId;
   message: MessageContent;
 
-  constructor(chatId: ChatId, message: MessageContent) {
+  constructor(chatId: ChatId, messageId: MessageId, message: MessageContent) {
     this.chatId = chatId;
+    this.messageId = messageId;
     this.message = message;
-    this.validateMessage();
-  }
-
-  private validateMessage() {
-    if (!this.chatId || !this.message)
-      throw new InvalidMessageDataError("Invalid message data");
   }
 
   public toPrimitives() {
     return {
       chatId: this.chatId.value,
+      messageId: this.messageId.value,
       message: this.message.value,
     };
   }
