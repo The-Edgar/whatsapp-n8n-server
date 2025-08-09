@@ -1,3 +1,4 @@
+import { ReplyMessageUseCase } from "@/lib/Whatsapp/application/use-cases/ReplyMessageUseCase";
 import { SendMessageUseCase } from "@/lib/Whatsapp/application/use-cases/SendMessageUseCase";
 import { WhatsappService } from "@/lib/Whatsapp/infrastructure/services/WhatsappService";
 
@@ -8,6 +9,7 @@ export const createServicesContainer = () => {
   return {
     whatsapp: {
       sendMessage: new SendMessageUseCase(whatsappService),
+      replyMessage: new ReplyMessageUseCase(whatsappService),
     },
   };
 };

@@ -12,22 +12,23 @@ import { InvalidMessageDataError } from "@/lib/Whatsapp/domain/exceptions/Invali
 import { InvalidPhoneNumberError } from "@/lib/Whatsapp/domain/exceptions/InvalidPhoneNumberError";
 import { RecipientNotFoundError } from "@/lib/Whatsapp/domain/exceptions/RecipientNotFoundError";
 
-export class SendMessageController implements Controller {
+export class ReplyMessageController implements Controller {
   async run(
     c: Context,
   ): Promise<Response & TypedResponse<ControllerResponse, StatusCode, "json">> {
     try {
       const services = c.get("services") as ServicesContainer;
-      const { chatId, message } = await c.req.json();
+      const { chatId, messageId, message } = await c.req.json();
 
-      await services.whatsapp.sendMessage.run(chatId, message);
+      await services.whatsapp.replyMessage.run(chatId, messageId, message);
 
       return c.json(
         {
           status: HttpStatusPhrases.OK,
-          message: "Message sent successfully",
+          message: "Message replied successfully",
           data: {
             chatId,
+            messageId,
             message,
           },
         },
@@ -38,17 +39,19 @@ export class SendMessageController implements Controller {
         error instanceof InvalidPhoneNumberError ||
         error instanceof InvalidMessageDataError ||
         error instanceof EmptyMessageContentError
-      )
+      ) {
         return c.json(
           { status: HttpStatusPhrases.BAD_REQUEST, message: error.message },
           HttpStatusCodes.BAD_REQUEST,
         );
+      }
 
-      if (error instanceof RecipientNotFoundError)
+      if (error instanceof RecipientNotFoundError) {
         return c.json(
           { status: HttpStatusPhrases.NOT_FOUND, message: error.message },
           HttpStatusCodes.NOT_FOUND,
         );
+      }
 
       throw error;
     }
