@@ -1,7 +1,7 @@
 import { Message } from "@/lib/Whatsapp/domain/model/Message";
 import type { WhatsappRepository } from "@/lib/Whatsapp/domain/repository/WhatsappRepository";
-import { MessageContent } from "@/lib/Whatsapp/domain/value-objects/MessageContent";
 import { ChatId } from "@/lib/Whatsapp/domain/value-objects/ChatId";
+import { MessageContent } from "@/lib/Whatsapp/domain/value-objects/MessageContent";
 
 export class SendMessageUseCase {
   constructor(private readonly repository: WhatsappRepository) {}
