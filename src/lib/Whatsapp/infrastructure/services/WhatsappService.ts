@@ -1,3 +1,4 @@
+import type { BroadcastMessage } from "@/lib/Whatsapp/domain/model/BroadcastMessage";
 import type { Message } from "@/lib/Whatsapp/domain/model/Message";
 import type { ReplyMessage } from "@/lib/Whatsapp/domain/model/ReplyMessage";
 import type { WhatsappRepository } from "@/lib/Whatsapp/domain/repository/WhatsappRepository";
@@ -43,5 +44,23 @@ export class WhatsappService implements WhatsappRepository {
     }
 
     await client.sendMessage(`${chatId}${WHATSAPP_SUFFIX}`, message);
+  }
+
+  async broadcastMessage(
+    broadcastMessage: BroadcastMessage,
+    delay: number,
+  ): Promise<void> {
+    const { chatIds, message } = broadcastMessage.toPrimitives();
+
+    if (!chatIds || !message)
+      throw new Error("chatIds and message are required");
+
+    const client = await this.getReadyClient();
+
+    for (const chatId of chatIds) {
+      await client.sendMessage(`${chatId}${WHATSAPP_SUFFIX}`, message);
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
   }
 }
