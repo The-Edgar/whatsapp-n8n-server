@@ -16,6 +16,7 @@ const ZodEnvSchema = z.object({
   NODE_ENV: z.string().min(1).max(12).default("development"),
   PORT: z.string().min(1).max(5).default("9999"),
   API_KEY: z.string(),
+  BROADCAST_DELAY_MS: z.string().min(1).max(5).default("1500"),
 });
 
 const { data: env, error } = ZodEnvSchema.safeParse(process.env);
