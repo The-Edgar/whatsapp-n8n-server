@@ -17,6 +17,7 @@ const ZodEnvSchema = z.object({
   PORT: z.string().min(1).max(5).default("9999"),
   API_KEY: z.string(),
   BROADCAST_DELAY_MS: z.string().min(1).max(5).default("1500"),
+  N8N_WEBHOOK_URL: z.string().url().optional(),
 });
 
 const { data: env, error } = ZodEnvSchema.safeParse(process.env);
