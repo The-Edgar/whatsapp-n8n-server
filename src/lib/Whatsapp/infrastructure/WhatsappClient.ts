@@ -19,24 +19,29 @@ let connectionStatus:
 export const getWhatsAppClient = async (): Promise<
   InstanceType<typeof Client>
 > => {
+  console.log(
+    `[WhatsAppClient] getWhatsAppClient called. Status: ${connectionStatus}, isReady: ${isReady}`,
+  );
+
   if (!initializationPromise) {
-    initializationPromise = new Promise<void>((resolve) => {
+    console.log("[WhatsAppClient] Creating new client instance...");
+    initializationPromise = new Promise<void>((resolve, reject) => {
       client = new Client({
         authStrategy: new LocalAuth({
           clientId: "whatsapp-n8n-server",
           dataPath: "./.wwebjs_auth",
         }),
         puppeteer: {
+          headless: true, // Using built-in Puppeteer Chromium 107 which is compatible
           args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
             "--disable-accelerated-2d-canvas",
             "--no-first-run",
-            "--no-zygote",
-            "--single-process",
             "--disable-gpu",
           ],
+          timeout: 60000,
         },
       });
 
@@ -46,6 +51,9 @@ export const getWhatsAppClient = async (): Promise<
 
         currentQrCode = qr;
         connectionStatus = "qr";
+        console.log(
+          `[WhatsAppClient] QR code generated. Status: ${connectionStatus}`,
+        );
       });
 
       client.on("ready", () => {
@@ -63,6 +71,9 @@ export const getWhatsAppClient = async (): Promise<
         isReady = true;
         currentQrCode = null;
         connectionStatus = "ready";
+        console.log(
+          `[WhatsAppClient] Client ready! Status: ${connectionStatus}`,
+        );
 
         resolve();
       });
@@ -70,6 +81,13 @@ export const getWhatsAppClient = async (): Promise<
       client.on("authenticated", () => {
         console.log("Client authenticated!");
         connectionStatus = "authenticating";
+        console.log(
+          `[WhatsAppClient] Authenticated. Status: ${connectionStatus}`,
+        );
+      });
+
+      client.on("loading_screen", (percent, message) => {
+        console.log(`[WhatsAppClient] Loading... ${percent}% - ${message}`);
       });
 
       client.on("disconnected", async (reason) => {
@@ -78,6 +96,7 @@ export const getWhatsAppClient = async (): Promise<
         currentQrCode = null;
         connectionStatus = "disconnected";
         initializationPromise = null;
+        reject(new Error(`Client disconnected: ${reason}`));
       });
 
       client.on("auth_failure", (msg) => {
@@ -86,17 +105,40 @@ export const getWhatsAppClient = async (): Promise<
         currentQrCode = null;
         connectionStatus = "disconnected";
         initializationPromise = null;
+        reject(new Error(`Authentication failed: ${msg}`));
       });
 
-      client.initialize();
+      // Handle browser/page crashes
+      client.on("error", (error) => {
+        console.error("[WhatsAppClient] Client error:", error);
+        reject(error);
+      });
+
+      console.log("[WhatsAppClient] Initializing client...");
+      client.initialize().catch((error) => {
+        console.error("[WhatsAppClient] Initialization failed:", error);
+        isReady = false;
+        connectionStatus = "disconnected";
+        initializationPromise = null;
+        reject(error);
+      });
     });
+  } else {
+    console.log("[WhatsAppClient] Using existing initialization promise...");
   }
 
+  console.log("[WhatsAppClient] Waiting for initialization to complete...");
   await initializationPromise;
+  console.log("[WhatsAppClient] Initialization promise resolved!");
 
-  if (!isReady)
+  if (!isReady) {
+    console.error(
+      `[WhatsAppClient] Client not ready! Status: ${connectionStatus}`,
+    );
     throw new WhatsappClientIsNotReadyError("WhatsApp client is not ready");
+  }
 
+  console.log("[WhatsAppClient] Returning ready client");
   return client;
 };
 

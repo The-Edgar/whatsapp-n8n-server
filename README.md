@@ -22,6 +22,9 @@ A Node.js server that integrates with WhatsApp Web via [`whatsapp-web.js`](https
 > [!NOTE]
 > Bun is used for local development and scripts, but the server works with npm, pnpm, or yarn.
 
+> [!IMPORTANT]
+> **Chrome/Chromium Compatibility**: This project uses Puppeteer 18.2.1 (bundled with whatsapp-web.js 1.34.1), which downloads and uses Chromium 107. **Do NOT configure a custom Chrome/Chromium path** in the code - let Puppeteer manage its own browser. Using system Chrome 130+ will cause "ProtocolError: Target closed" crashes due to DevTools Protocol incompatibilities.
+
 ## 🚀 Installation
 
 Clone the repository:
@@ -70,6 +73,42 @@ Server will run on:
 ```bash
 http://localhost:3000
 ```
+
+## 🐛 Troubleshooting
+
+### "ProtocolError: Target closed" or Browser Crashes
+
+If you encounter `ProtocolError: Protocol error (Target.setAutoAttach): Target closed` or similar Puppeteer errors:
+
+**Root Cause**: Version mismatch between Puppeteer (expecting Chromium 107 from 2022) and system Chrome/Chromium (versions 130+).
+
+**Solution**:
+1. **Never hardcode `executablePath`** in Puppeteer configuration - Remove any custom Chrome/Chromium paths
+2. **Let Puppeteer download its own Chromium** - On first run, Puppeteer will download compatible Chromium 107 to `node_modules/puppeteer-core/.local-chromium/`
+3. **Keep whatsapp-web.js updated** - Use version 1.34.1+ which includes fixes for "ready event stuck" issues
+4. **Use `headless: true`** - Works reliably with Puppeteer's bundled Chromium
+
+**What We Fixed**:
+- Upgraded `whatsapp-web.js` from 1.32.0 → 1.34.1
+- Removed hardcoded `executablePath: "/Applications/Chromium.app/..."`
+- Added proper error handling with promise rejection
+- Added `loading_screen` and `error` event listeners
+- Simplified Puppeteer args (removed `--no-zygote`, `--single-process`)
+
+### QR Code Not Appearing
+
+If the QR code doesn't appear after 30-60 seconds:
+1. Check if Chromium is downloading: `ls -la node_modules/puppeteer-core/.local-chromium/`
+2. Check for errors in terminal output
+3. Ensure no other process is using port 3000: `lsof -ti:3000`
+4. Delete auth folder and restart: `rm -rf .wwebjs_auth/ && bun dev`
+
+### Session Persistence Issues
+
+If you need to re-authenticate frequently:
+1. Don't delete `.wwebjs_auth/` folder - This contains your session
+2. Ensure the folder has write permissions
+3. Check `LocalAuth` configuration in `WhatsappClient.ts`
 
 ## 📡 API
 
@@ -259,6 +298,31 @@ Body (JSON):
 
 >[!TIP]
 >You can use dynamic data from previous nodes in chatId or message to send personalized messages in your workflows.
+
+## 🔧 Technical Details
+
+### Puppeteer & Chrome Compatibility
+
+This project uses:
+- **whatsapp-web.js**: 1.34.1
+- **Puppeteer**: 18.2.1 (bundled dependency)
+- **Compatible Chromium**: 107.0.5296.0 (auto-downloaded by Puppeteer)
+
+**Important Notes**:
+- Puppeteer automatically downloads Chromium to `node_modules/puppeteer-core/.local-chromium/mac-1045629/` (or equivalent for your OS)
+- The DevTools Protocol has breaking changes between Chromium 107 and modern Chrome 130+
+- Using newer Chrome versions causes `ProtocolError: Target closed` crashes
+- The `WhatsappClient.ts` configuration intentionally does NOT specify `executablePath` to let Puppeteer use its bundled browser
+
+### Architecture
+
+The codebase follows Clean Architecture with clear separation:
+- **Domain Layer**: Entities, Value Objects, Repository interfaces
+- **Application Layer**: Use Cases that orchestrate domain logic
+- **Infrastructure Layer**: Controllers, Services, Routes, WhatsApp client management
+- **Shared Layer**: Configuration, middlewares, dependency injection
+
+See `CLAUDE.md` for detailed architecture documentation.
 
 ## 🧑‍💻 Author
 
