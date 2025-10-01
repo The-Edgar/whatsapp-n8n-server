@@ -39,6 +39,7 @@ export const getWhatsAppClient = async (): Promise<
             "--disable-dev-shm-usage",
             "--disable-accelerated-2d-canvas",
             "--no-first-run",
+            "--single-process",
             "--disable-gpu",
           ],
           timeout: 60000,
