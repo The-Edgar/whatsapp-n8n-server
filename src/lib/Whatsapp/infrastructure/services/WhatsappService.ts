@@ -9,7 +9,9 @@ const WHATSAPP_SUFFIX = "@c.us";
 
 export class WhatsappService implements WhatsappRepository {
   private async getReadyClient() {
+    console.log("[WhatsappService] Getting ready client...");
     const client = await getWhatsAppClient();
+    console.log("[WhatsappService] Client obtained!");
 
     if (!client)
       throw new WhatsappClientIsNotReadyError(
@@ -20,12 +22,17 @@ export class WhatsappService implements WhatsappRepository {
   }
 
   async sendMessage(message: Message): Promise<void> {
+    console.log("[WhatsappService] sendMessage called");
     const { chatId, message: text } = message.toPrimitives();
+    console.log(`[WhatsappService] chatId: ${chatId}, message: ${text}`);
 
     if (!chatId || !text) throw new Error("chatId and message are required");
 
+    console.log("[WhatsappService] Getting ready client...");
     const client = await this.getReadyClient();
+    console.log("[WhatsappService] Client ready, sending message...");
     await client.sendMessage(`${chatId}${WHATSAPP_SUFFIX}`, text);
+    console.log("[WhatsappService] Message sent!");
   }
 
   async replyMessage(replyMessage: ReplyMessage): Promise<void> {

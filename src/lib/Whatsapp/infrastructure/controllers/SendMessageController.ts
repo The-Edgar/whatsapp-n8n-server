@@ -17,10 +17,14 @@ export class SendMessageController implements Controller {
     c: Context,
   ): Promise<Response & TypedResponse<ControllerResponse, StatusCode, "json">> {
     try {
+      console.log("[SendMessageController] Request received");
       const services = c.get("services") as ServicesContainer;
       const { chatId, message } = await c.req.json();
+      console.log(`[SendMessageController] Parsed data - chatId: ${chatId}, message: ${message}`);
 
+      console.log("[SendMessageController] Calling sendMessage.run()...");
       await services.whatsapp.sendMessage.run(chatId, message);
+      console.log("[SendMessageController] Message sent successfully!");
 
       return c.json(
         {
@@ -34,6 +38,7 @@ export class SendMessageController implements Controller {
         HttpStatusCodes.OK,
       );
     } catch (error) {
+      console.error("[SendMessageController] Error occurred:", error);
       if (
         error instanceof InvalidPhoneNumberError ||
         error instanceof InvalidMessageDataError ||
