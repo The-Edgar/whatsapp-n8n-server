@@ -246,60 +246,60 @@ export const getWhatsAppClient = async (): Promise<
       // Handle incoming messages
       // Note: Message handler temporarily disabled to prevent Protocol errors during initialization
       // TODO: Re-enable once stable
-      // client.on("message", async (msg) => {
-      //   try {
-      //     // Filter out unwanted messages
-      //     if (msg.fromMe) {
-      //       console.log("[WhatsAppClient] Ignoring own message");
-      //       return;
-      //     }
+      client.on("message", async (msg) => {
+        try {
+          // Filter out unwanted messages
+          if (msg.fromMe) {
+            console.log("[WhatsAppClient] Ignoring own message");
+            return;
+          }
 
-      //     if (msg.isStatus) {
-      //       console.log("[WhatsAppClient] Ignoring status update");
-      //       return;
-      //     }
+          if (msg.isStatus) {
+            console.log("[WhatsAppClient] Ignoring status update");
+            return;
+          }
 
-      //     console.log(
-      //       `[WhatsAppClient] Received message from ${msg.from}: ${msg.body}`,
-      //     );
+          console.log(
+            `[WhatsAppClient] Received message from ${msg.from}: ${msg.body}`,
+          );
 
-      //     // Lazy import to avoid circular dependency
-      //     const { IncomingMessage } = await import(
-      //       "@/lib/Whatsapp/domain/model/IncomingMessage"
-      //     );
-      //     const { createServicesContainer } = await import(
-      //       "@/lib/Shared/infrastructure/services/createServicesContainer"
-      //     );
+          // Lazy import to avoid circular dependency
+          const { IncomingMessage } = await import(
+            "@/lib/Whatsapp/domain/model/IncomingMessage"
+          );
+          const { createServicesContainer } = await import(
+            "@/lib/Shared/infrastructure/services/createServicesContainer"
+          );
 
-      //     const services = createServicesContainer();
+          const services = createServicesContainer();
 
-      //     const incomingMessage = new IncomingMessage(
-      //       msg.id._serialized,
-      //       msg.from,
-      //       msg.body,
-      //       msg.timestamp,
-      //       msg.hasMedia,
-      //       msg.from.includes("@g.us"), // Group chat detection
-      //       msg.fromMe,
-      //       msg.from,
-      //     );
+          const incomingMessage = new IncomingMessage(
+            msg.id._serialized,
+            msg.from,
+            msg.body,
+            msg.timestamp,
+            msg.hasMedia,
+            msg.from.includes("@g.us"), // Group chat detection
+            msg.fromMe,
+            msg.from,
+          );
 
-      //     // Fire and forget - don't await
-      //     services.whatsapp.forwardIncomingMessage
-      //       .execute(incomingMessage)
-      //       .catch((error) => {
-      //         console.error(
-      //           "[WhatsAppClient] Error forwarding incoming message:",
-      //           error,
-      //         );
-      //       });
-      //   } catch (error) {
-      //     console.error(
-      //       "[WhatsAppClient] Error handling incoming message:",
-      //       error,
-      //     );
-      //   }
-      // });
+          // Fire and forget - don't await
+          services.whatsapp.forwardIncomingMessage
+            .execute(incomingMessage)
+            .catch((error) => {
+              console.error(
+                "[WhatsAppClient] Error forwarding incoming message:",
+                error,
+              );
+            });
+        } catch (error) {
+          console.error(
+            "[WhatsAppClient] Error handling incoming message:",
+            error,
+          );
+        }
+      });
 
       console.log("[WhatsAppClient] Initializing client...");
       connectionStatus = "initializing";
