@@ -4,6 +4,11 @@ import * as HttpStatusPhrases from "@/lib/Shared/common/HttpStatusPhrases";
 import { env } from "@/lib/Shared/infrastructure/config/env";
 
 export const authMiddleware: MiddlewareHandler = async (c, next) => {
+  // Skip auth for health endpoint
+  if (c.req.path === "/api/v1/health") {
+    return await next();
+  }
+
   const apiKey = c.req.header("x-api-key");
 
   if (!apiKey || apiKey !== env?.API_KEY) {

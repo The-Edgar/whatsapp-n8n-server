@@ -8,18 +8,24 @@ const app = createApp();
 
 registerRoutes(app);
 
-console.log("WhatsApp client initialization started");
-initializeClient();
+// Only initialize WhatsApp client if not in test mode
+if (env?.NODE_ENV !== "test") {
+  console.log("WhatsApp client initialization started");
+  initializeClient();
+}
 
-serve(
-  {
-    fetch: app.fetch,
-    port: Number(env?.PORT),
-  },
-  (_info) => {
-    env?.NODE_ENV === "development" &&
-      console.log(`Server is running on http://localhost:${_info.port}`);
-  },
-);
+// Only start server if not in test mode (tests will start their own server)
+if (env?.NODE_ENV !== "test") {
+  serve(
+    {
+      fetch: app.fetch,
+      port: Number(env?.PORT),
+    },
+    (_info) => {
+      env?.NODE_ENV === "development" &&
+        console.log(`Server is running on http://localhost:${_info.port}`);
+    },
+  );
+}
 
 export { app };

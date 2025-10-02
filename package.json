@@ -6,7 +6,9 @@
     "start": "tsx src/index.ts",
     "format": "bunx biome format --write src",
     "lint": "bunx biome lint --write src",
-    "check": "bunx biome check src"
+    "check": "bunx biome check src",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
   },
   "dependencies": {
     "@hono/node-server": "1.18.1",

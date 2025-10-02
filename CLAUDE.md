@@ -21,6 +21,14 @@ bunx biome lint --write src      # Lint and auto-fix
 bunx biome check src             # Run all checks (format + lint)
 ```
 
+### Testing
+```bash
+bun test              # Run integration tests
+bun test --watch      # Watch mode (re-run on changes)
+```
+
+**Note:** See [TESTING.md](TESTING.md) for comprehensive testing documentation. Tests verify real behavior (not mocks) and work identically on Mac and Linux.
+
 ## Architecture
 
 ### Clean Architecture Layers
