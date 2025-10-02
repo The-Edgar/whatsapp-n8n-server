@@ -4,12 +4,12 @@ import { ReplyMessageUseCase } from "@/lib/Whatsapp/application/use-cases/ReplyM
 import { SendMessageUseCase } from "@/lib/Whatsapp/application/use-cases/SendMessageUseCase";
 import { WebhookService } from "@/lib/Whatsapp/infrastructure/services/WebhookService";
 import { WhatsappService } from "@/lib/Whatsapp/infrastructure/services/WhatsappService";
-import { env } from "@/lib/Shared/infrastructure/config/env";
+import { n8nWebhookUrl } from "@/lib/Shared/infrastructure/config/env";
 
 export const createServicesContainer = () => {
   // services
   const whatsappService = new WhatsappService();
-  const webhookService = new WebhookService(env?.N8N_WEBHOOK_URL);
+  const webhookService = new WebhookService(n8nWebhookUrl);
 
   return {
     whatsapp: {
